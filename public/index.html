@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Automation Hub</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background-color: #f9f9f9; }
+        h1 { text-align: center; color: #333; }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; }
+        input[type="text"] { width: calc(100% - 22px); padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-primary { background-color: #007bff; }
+        .btn-success { background-color: #28a745; }
+        .btn-warning { background-color: #ffc107; color: black; }
+        .btn-danger { background-color: #dc3545; }
+        .hidden { display: none; }
+        #log-area { background: #333; color: #fff; padding: 15px; border-radius: 8px; height: 150px; overflow-y: auto; font-family: monospace; }
+        .log-msg { margin: 5px 0; }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+    </style>
+</head>
+<body>
+
+    <h1>Playwright Automation Hub</h1>
+
+    <div class="section" id="interactive-section">
+        <h2>Interactive Script (Wait for Element)</h2>
+        <p>Visits the URL, waits for <code>#shortlink</code> to be populated, then lets you execute the action.</p>
+        <div class="input-group">
+            <input type="text" id="target-url" placeholder="Enter target URL (e.g. https://example.app/)">
+        </div>
+        <button id="btn-start" class="btn-primary">Start Interactive Mode</button>
+        <button id="btn-execute" class="btn-warning hidden">Run Task (Target Ready!)</button>
+    </div>
+
+    <div class="section" id="preloaded-section">
+        <h2>Preloaded Scripts (One-Click)</h2>
+        <p>Runs an end-to-end automation in the background automatically.</p>
+        <button id="btn-preload-example" class="btn-primary">Run Example (Scrape Title)</button>
+    </div>
+
+    <div class="section">
+        <h2>Status Logs</h2>
+        <div id="log-area"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/script.js"></script>
+</body>
+</html>
