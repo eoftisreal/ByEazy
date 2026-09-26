@@ -268,7 +268,8 @@ io.on('connection', (socket) => {
             socket.emit('status', { step: 4, message: 'Ready!' });
             socket.emit('interactive_ready', {
                 message: 'Target element found!',
-                value: result.value.substring(0, 100)
+                value: result.value.substring(0, 100),
+                fullUrl: result.value // Send the full URL to the frontend
             });
 
         } catch (error) {

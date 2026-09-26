@@ -43,8 +43,17 @@ btnStart.addEventListener('click', () => {
     socket.emit('start_interactive', { url });
 });
 
+let currentInteractiveUrl = null;
+
 socket.on('interactive_ready', (data) => {
     log(data.message, 'success');
+
+    // If the server gave us the extracted URL, save it
+    if (data.fullUrl) {
+        currentInteractiveUrl = data.fullUrl;
+        btnExecute.textContent = 'Open Link in New Tab';
+    }
+
     // Reveal the execute button
     btnExecute.classList.remove('hidden');
 });
@@ -57,7 +66,18 @@ socket.on('interactive_error', (data) => {
 btnExecute.addEventListener('click', () => {
     log('Executing action...');
     btnExecute.disabled = true;
-    socket.emit('execute_interactive');
+
+    if (currentInteractiveUrl) {
+        // Open the URL locally in the user's REAL browser
+        log(`Opening ${currentInteractiveUrl} in your browser...`, 'info');
+        window.open(currentInteractiveUrl, '_blank');
+        currentInteractiveUrl = null;
+
+        // We still tell the server to do its cleanup/reload routine
+        socket.emit('execute_interactive');
+    } else {
+        socket.emit('execute_interactive');
+    }
 });
 
 socket.on('interactive_success', (data) => {
