@@ -138,45 +138,41 @@ io.on('connection', (socket) => {
                 socket.emit('preloaded_success', { message: `[1/3] Launching browser and navigating to ${url}...` });
 
                 const browser = await chromium.launch({ headless: true });
-                const context = await browser.newContext();
-                const page = await context.newPage();
+                try {
+                    const context = await browser.newContext();
+                    const page = await context.newPage();
 
-                await page.goto(url, { waitUntil: 'domcontentloaded' });
+                    await page.goto(url, { waitUntil: 'domcontentloaded' });
 
-                socket.emit('preloaded_success', { message: `[2/3] Waiting for #shortlink to populate...` });
+                    socket.emit('preloaded_success', { message: `[2/3] Waiting for #shortlink to populate (timeout in 60s)...` });
 
-                // Wait for the shortlink element to exist and have a non-empty value
-                const targetUrl = await page.evaluate(async () => {
-                    return new Promise((resolve) => {
-                        const check = () => {
-                            const el = document.querySelector('#shortlink');
-                            if (el && el.value && el.value.trim().length > 0) {
-                                resolve(el.value.trim());
-                            } else {
-                                setTimeout(check, 200); // Check every 200ms like the Tampermonkey script
-                            }
-                        };
-                        check();
-                    });
-                });
+                    // Wait for the shortlink element to exist and have a non-empty value, with a 60-second timeout
+                    await page.waitForFunction(() => {
+                        const el = document.querySelector('#shortlink');
+                        return el && el.value && el.value.trim().length > 0;
+                    }, { timeout: 60000, polling: 200 });
 
-                socket.emit('preloaded_success', { message: `[3/3] Shortlink found (${targetUrl}). Executing...` });
+                    const targetUrl = await page.evaluate(() => document.querySelector('#shortlink').value.trim());
 
-                // Simulate opening in new tab
-                const newPage = await context.newPage();
-                await newPage.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(e => console.log('Navigation timeout expected:', e.message));
+                    socket.emit('preloaded_success', { message: `[3/3] Shortlink found (${targetUrl}). Executing...` });
 
-                // Wait 15ms
-                await new Promise(resolve => setTimeout(resolve, 15));
+                    // Simulate opening in new tab
+                    const newPage = await context.newPage();
+                    await newPage.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(e => console.log('Navigation timeout expected:', e.message));
 
-                // Close the tab
-                await newPage.close();
+                    // Wait 15ms
+                    await new Promise(resolve => setTimeout(resolve, 15));
 
-                // Reload original page
-                await page.reload({ waitUntil: 'domcontentloaded' });
+                    // Close the tab
+                    await newPage.close();
 
-                await browser.close();
-                socket.emit('preloaded_success', { message: `Animedekho script executed successfully!` });
+                    // Reload original page
+                    await page.reload({ waitUntil: 'domcontentloaded' });
+
+                    socket.emit('preloaded_success', { message: `Animedekho script executed successfully!` });
+                } finally {
+                    await browser.close();
+                }
             }
             else {
                 throw new Error('Unknown script ID');
