@@ -36,6 +36,7 @@
 
         button { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: bold; font-size: 16px; transition: all 0.2s; width: 100%; margin-bottom: 10px; }
         button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.5); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-primary { background-color: #007bff; }
         .btn-warning { background-color: #ffc107; color: black; }
@@ -68,7 +69,7 @@
         <h1>Bypass Anime dekho</h1>
 
         <div class="section" id="interactive-section">
-            <p style="text-align: center; margin-bottom: 25px; font-size: 16px; color: #555;">Are you Sure?.</p>
+            <p style="text-align: center; margin-bottom: 25px; font-size: 16px; color: #555;">Are you sure?</p>
 
             <div class="input-group hidden" id="fallback-input-group">
                 <label for="target-url" style="display:block; margin-bottom:8px; font-size: 14px; font-weight: bold; color: #d9534f;">⚠ Fallback URL (automatically appends movie-hindi/cars/):</label>
@@ -78,7 +79,7 @@
             <button id="btn-start" class="btn-primary">Start Bypass</button>
             <button id="btn-execute" class="btn-warning hidden">Redirect Now</button>
 
-            <div id="processing-indicator" class="hidden">
+            <div id="processing-indicator" class="hidden" role="status" aria-live="polite">
                 <div class="spinner"></div>
                 <span>Processing... Please wait</span>
             </div>
