@@ -73,19 +73,41 @@ function resetInteractiveUI() {
 
 
 // --- Preloaded Scripts Flow ---
+const btnPreloadAnimedekho = document.getElementById('btn-preload-animedekho');
+const animedekhoUrlInput = document.getElementById('animedekho-url');
+
+btnPreloadAnimedekho.addEventListener('click', () => {
+    const url = animedekhoUrlInput.value.trim();
+    if (!url) {
+        alert('Please enter a URL for the AnimeDekho script.');
+        return;
+    }
+
+    log(`Running Animedekho script...`);
+    btnPreloadAnimedekho.disabled = true;
+    btnPreloadExample.disabled = true;
+    socket.emit('run_preloaded', { scriptId: 'animedekho_verify', url });
+});
 
 btnPreloadExample.addEventListener('click', () => {
     log(`Running preloaded script 'example_scrape_title'...`);
     btnPreloadExample.disabled = true;
+    btnPreloadAnimedekho.disabled = true;
     socket.emit('run_preloaded', { scriptId: 'example_scrape_title' });
 });
 
 socket.on('preloaded_success', (data) => {
     log(data.message, 'success');
-    btnPreloadExample.disabled = false;
+    // We only want to re-enable buttons if it's the FINAL success message.
+    // For Animedekho, final message contains "successfully"
+    if (data.message.includes('Successfully ran!') || data.message.includes('successfully!')) {
+        btnPreloadExample.disabled = false;
+        btnPreloadAnimedekho.disabled = false;
+    }
 });
 
 socket.on('preloaded_error', (data) => {
     log(`Error: ${data.message}`, 'error');
     btnPreloadExample.disabled = false;
+    btnPreloadAnimedekho.disabled = false;
 });
