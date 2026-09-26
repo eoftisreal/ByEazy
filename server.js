@@ -18,6 +18,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+// Add secret route that serves the same HTML (script.js will check the path to reveal logs)
+app.get('/mario', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 const activeSessions = {};
 
 /**
@@ -238,6 +243,12 @@ io.on('connection', (socket) => {
         const { url } = data;
         console.log(`[${socket.id}] START_INTERACTIVE: ${url}`);
 
+        // SSRF Protection: Only allow HTTP/HTTPS, reject local/file/internal protocols
+        if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
+            socket.emit('interactive_error', { message: 'Invalid URL. Only http and https protocols are allowed.' });
+            return;
+        }
+
         try {
             const browser = await launchBrowserWithStealth();
             const { context, page } = await createStealthPage(browser);
@@ -360,6 +371,10 @@ app.post('/api/verify', async (req, res) => {
 
     if (!url) {
         return res.status(400).json({ error: 'URL required' });
+    }
+
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return res.status(400).json({ error: 'Invalid URL. Only http and https protocols are allowed.' });
     }
 
     console.log(`\n[API] POST /api/verify | ${url}`);
