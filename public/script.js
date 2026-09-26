@@ -20,10 +20,14 @@ if (window.location.pathname !== '/mario') {
 // Function to toggle processing indicator
 function setProcessing(isProcessing) {
     if (isProcessing) {
-        btnStart.classList.add('hidden');
+        btnStart.disabled = true;
+        btnStart.setAttribute('aria-busy', 'true');
+        // Instead of hiding the button completely and breaking focus, we hide the text via CSS or just show the indicator below it.
+        // For simplicity and minimal CSS change, we keep it visible but disabled.
         processingIndicator.classList.remove('hidden');
     } else {
-        btnStart.classList.remove('hidden');
+        btnStart.disabled = false;
+        btnStart.removeAttribute('aria-busy');
         processingIndicator.classList.add('hidden');
     }
 }
