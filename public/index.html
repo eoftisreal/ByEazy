@@ -6,11 +6,11 @@
     <title>Bypass Anime dekho</title>
     <style>
         * { box-sizing: border-box; }
-        html, body { margin: 0; min-height: 100%; background: transparent; font-family: Arial, sans-serif; color: #333; }
+        html, body { margin: 0; height: 100%; background: #070313; font-family: Arial, sans-serif; color: #333; overflow: hidden; }
 
         /* Animated Background CSS */
         :root { --accent-color: #87ceeb; }
-        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; overflow: hidden; z-index: -1; }
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, #1c052e, #070313); overflow: hidden; z-index: -1; }
         #moon { position: absolute; top: 5vh; right: 10vw; width: 100px; height: 100px; border-radius: 50%; background: transparent; box-shadow: 0 0 20px 5px rgba(240,240,255,.6), 0 0 50px 20px rgba(240,240,255,.3), inset 0 0 15px rgba(0,0,0,.2); animation: shine 8s ease-in-out infinite; }
         #stars, #stars2, #stars3 { position: absolute; left: 0; top: 0; width: 1px; height: 1px; background: transparent; animation: animStar linear infinite; }
         #stars { animation-duration: 50s; box-shadow: 78vw 8vh 0 0 #fff, 89vw 4vh 1px 1px #fff, 96vw 25vh 1px 0 #fff, 24vw 35vh 1px 1px #fff, 62vw 1vh 0 0 #fff, 4vw 97vh 1px 1px #fff, 3vw 12vh 0 1px #fff, 43vw 9vh 1px 1px #fff, 8vw 60vh 0 1px #fff, 64vw 33vh 1px 1px #fff; }
@@ -26,7 +26,7 @@
         @keyframes pulse { 0% { opacity: 0.6; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0.6; transform: scale(0.98); } }
 
         /* UI Overrides for Dark Background */
-        .container { position: relative; z-index: 1; max-width: 800px; margin: 40px auto; padding: 20px; }
+        .container { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 40px 20px 20px 20px; height: 100%; overflow-y: auto; }
         h1 { text-align: center; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 2.5rem; }
         h2 { color: #333; }
         .section { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; backdrop-filter: blur(5px); }
