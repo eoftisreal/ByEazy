@@ -32,27 +32,16 @@ io.on('connection', (socket) => {
             // Store the session
             activeSessions[socket.id] = { browser, page };
 
-            await page.goto(url, { waitUntil: 'domcontentloaded' });
+            // Add longer timeout and wait for network idle
+            await page.goto(url, {
+                waitUntil: 'networkidle',
+                timeout: 30000
+            }).catch(async (err) => {
+                console.log(`Navigation warning (non-critical): ${err.message}`);
+            });
 
-            // Poll for #shortlink element to be available and have a value
-            let found = false;
-            let attempts = 0;
-            const maxAttempts = 60; // Wait up to ~30 seconds (500ms * 60)
-
-            while (attempts < maxAttempts) {
-                const isReady = await page.evaluate(() => {
-                    const el = document.querySelector('#shortlink');
-                    return el && el.value && el.value.trim().length > 0;
-                });
-
-                if (isReady) {
-                    found = true;
-                    break;
-                }
-
-                await new Promise(resolve => setTimeout(resolve, 500));
-                attempts++;
-            }
+            // Wait for shortlink with improved polling
+            const found = await waitForShortlink(page, socket.id);
 
             if (found) {
                 console.log(`Target found for ${socket.id}`);
@@ -93,10 +82,17 @@ io.on('connection', (socket) => {
 
             console.log(`Target URL extracted: ${targetUrl}`);
 
-            // Simulate opening new tab, closing, and reloading (since Playwright is headless, we just do it sequentially)
-            // Open the extracted URL in the same context to simulate visiting it
+            // Simulate opening new tab, closing, and reloading
             const newPage = await session.browser.newPage();
-            await newPage.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(e => console.log('Navigation error/timeout (expected):', e.message));
+
+            try {
+                await newPage.goto(targetUrl, {
+                    waitUntil: 'domcontentloaded',
+                    timeout: 15000
+                });
+            } catch (e) {
+                console.log('Navigation expected timeout:', e.message);
+            }
 
             // Wait 15ms (as per user script)
             await new Promise(resolve => setTimeout(resolve, 15));
@@ -104,8 +100,13 @@ io.on('connection', (socket) => {
             // Close the "new tab"
             await newPage.close();
 
-            // Reload original page
-            await page.reload({ waitUntil: 'domcontentloaded' });
+            // Reload original page with timeout
+            await page.reload({
+                waitUntil: 'domcontentloaded',
+                timeout: 20000
+            }).catch(err => {
+                console.log('Reload warning:', err.message);
+            });
 
             socket.emit('interactive_success', { message: 'Task executed successfully!' });
         } catch (error) {
@@ -135,41 +136,115 @@ io.on('connection', (socket) => {
             else if (scriptId === 'animedekho_verify') {
                 if (!url) throw new Error('URL is required for this script.');
 
-                socket.emit('preloaded_success', { message: `[1/3] Launching browser and navigating to ${url}...` });
+                socket.emit('preloaded_success', { message: `[1/4] Launching browser and navigating to ${url}...` });
 
                 const browser = await chromium.launch({ headless: true });
                 try {
                     const context = await browser.newContext();
                     const page = await context.newPage();
 
-                    await page.goto(url, { waitUntil: 'domcontentloaded' });
+                    // Navigate with networkidle for better stability
+                    await page.goto(url, {
+                        waitUntil: 'networkidle',
+                        timeout: 30000
+                    }).catch((err) => {
+                        console.log(`Navigation partial load: ${err.message}`);
+                    });
 
-                    socket.emit('preloaded_success', { message: `[2/3] Waiting for #shortlink to populate (timeout in 60s)...` });
+                    socket.emit('preloaded_success', { message: `[2/4] Page loaded. Waiting for #shortlink to populate...` });
 
-                    // Wait for the shortlink element to exist and have a non-empty value, with a 60-second timeout
-                    await page.waitForFunction(() => {
+                    // Use improved shortlink waiting
+                    const isReady = await page.evaluate(() => {
                         const el = document.querySelector('#shortlink');
-                        return el && el.value && el.value.trim().length > 0;
-                    }, { timeout: 60000, polling: 200 });
+                        return !!(el && el.value && el.value.trim().length > 0);
+                    });
 
-                    const targetUrl = await page.evaluate(() => document.querySelector('#shortlink').value.trim());
+                    if (isReady) {
+                        const targetUrl = await page.evaluate(() =>
+                            document.querySelector('#shortlink').value.trim()
+                        );
 
-                    socket.emit('preloaded_success', { message: `[3/3] Shortlink found (${targetUrl}). Executing...` });
+                        socket.emit('preloaded_success', {
+                            message: `[3/4] Shortlink found (${targetUrl}). Executing...`
+                        });
 
-                    // Simulate opening in new tab
-                    const newPage = await context.newPage();
-                    await newPage.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(e => console.log('Navigation timeout expected:', e.message));
+                        // Simulate opening in new tab
+                        const newPage = await context.newPage();
 
-                    // Wait 15ms
-                    await new Promise(resolve => setTimeout(resolve, 15));
+                        try {
+                            await newPage.goto(targetUrl, {
+                                waitUntil: 'domcontentloaded',
+                                timeout: 15000
+                            });
+                        } catch (e) {
+                            console.log('Navigation expected:', e.message);
+                        }
 
-                    // Close the tab
-                    await newPage.close();
+                        // Wait 15ms
+                        await new Promise(resolve => setTimeout(resolve, 15));
 
-                    // Reload original page
-                    await page.reload({ waitUntil: 'domcontentloaded' });
+                        // Close the tab
+                        await newPage.close();
 
-                    socket.emit('preloaded_success', { message: `Animedekho script executed successfully!` });
+                        // Reload original page
+                        await page.reload({
+                            waitUntil: 'domcontentloaded',
+                            timeout: 20000
+                        }).catch(err => {
+                            console.log('Reload expected:', err.message);
+                        });
+
+                        socket.emit('preloaded_success', {
+                            message: `[4/4] Animedekho script executed successfully!`
+                        });
+                    } else {
+                        // Fallback: wait with polling if not immediately ready
+                        socket.emit('preloaded_success', {
+                            message: `[3/4] Waiting for element (polling with 45s timeout)...`
+                        });
+
+                        try {
+                            await page.waitForFunction(() => {
+                                const el = document.querySelector('#shortlink');
+                                return el && el.value && el.value.trim().length > 0;
+                            }, { timeout: 45000, polling: 300 });
+
+                            const targetUrl = await page.evaluate(() =>
+                                document.querySelector('#shortlink').value.trim()
+                            );
+
+                            socket.emit('preloaded_success', {
+                                message: `[3/4] Shortlink found (${targetUrl}). Executing...`
+                            });
+
+                            // Execute the rest of the script
+                            const newPage = await context.newPage();
+
+                            try {
+                                await newPage.goto(targetUrl, {
+                                    waitUntil: 'domcontentloaded',
+                                    timeout: 15000
+                                });
+                            } catch (e) {
+                                console.log('Navigation expected:', e.message);
+                            }
+
+                            await new Promise(resolve => setTimeout(resolve, 15));
+                            await newPage.close();
+                            await page.reload({
+                                waitUntil: 'domcontentloaded',
+                                timeout: 20000
+                            }).catch(err => {
+                                console.log('Reload expected:', err.message);
+                            });
+
+                            socket.emit('preloaded_success', {
+                                message: `[4/4] Animedekho script executed successfully!`
+                            });
+                        } catch (pollError) {
+                            throw new Error(`Timeout waiting for shortlink: ${pollError.message}`);
+                        }
+                    }
                 } finally {
                     await browser.close();
                 }
@@ -188,6 +263,30 @@ io.on('connection', (socket) => {
         await cleanupSession(socket.id);
     });
 });
+
+// Helper function to wait for shortlink with improved logic
+async function waitForShortlink(page, socketId) {
+    try {
+        // First check if it's already there
+        const exists = await page.evaluate(() => {
+            const el = document.querySelector('#shortlink');
+            return !!(el && el.value && el.value.trim().length > 0);
+        });
+
+        if (exists) return true;
+
+        // If not, wait with polling (max 45 seconds)
+        await page.waitForFunction(() => {
+            const el = document.querySelector('#shortlink');
+            return el && el.value && el.value.trim().length > 0;
+        }, { timeout: 45000, polling: 300 });
+
+        return true;
+    } catch (error) {
+        console.error(`Shortlink wait failed for ${socketId}:`, error.message);
+        return false;
+    }
+}
 
 async function cleanupSession(socketId) {
     if (activeSessions[socketId]) {
