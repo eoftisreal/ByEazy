@@ -24,34 +24,16 @@
 </head>
 <body>
 
-    <h1>Playwright Automation Hub</h1>
+    <h1>Bypass Anime dekho</h1>
 
     <div class="section" id="interactive-section">
-        <h2>Interactive Script (Wait for Element)</h2>
-        <p>Visits the URL, waits for <code>#shortlink</code> to be populated, then lets you execute the action.</p>
-        <div class="input-group">
-            <input type="text" id="target-url" placeholder="Enter target URL (e.g. https://example.app/)">
+        <p>Automatically fetches the target shortlink and redirects you.</p>
+        <div class="input-group hidden" id="fallback-input-group">
+            <label for="target-url" style="display:block; margin-bottom:5px; font-size: 14px;">Fallback URL (automatically appends movie-hindi/cars/):</label>
+            <input type="text" id="target-url" placeholder="e.g. https://example.com">
         </div>
-        <button id="btn-start" class="btn-primary">Start Interactive Mode</button>
-        <button id="btn-execute" class="btn-warning hidden">Run Task (Target Ready!)</button>
-    </div>
-
-    <div class="section" id="preloaded-section">
-        <h2>Preloaded Scripts (One-Click)</h2>
-        <p>Runs an end-to-end automation in the background automatically.</p>
-
-        <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 4px;">
-            <h3>AnimeDekho Script</h3>
-            <div class="input-group">
-                <input type="text" id="animedekho-url" placeholder="Enter target URL (e.g. https://animedekho.app/...)">
-            </div>
-            <button id="btn-preload-animedekho" class="btn-primary">Run AnimeDekho Script</button>
-        </div>
-
-        <div style="padding: 15px; border: 1px solid #eee; border-radius: 4px;">
-            <h3>Example</h3>
-            <button id="btn-preload-example" class="btn-primary">Run Example (Scrape Title)</button>
-        </div>
+        <button id="btn-start" class="btn-primary">Start Bypass</button>
+        <button id="btn-execute" class="btn-warning hidden">Redirect Now</button>
     </div>
 
     <div class="section">
