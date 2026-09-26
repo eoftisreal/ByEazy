@@ -7,6 +7,7 @@ const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
+const processingIndicator = document.getElementById('processing-indicator');
 
 let isFirstTry = true;
 const SUFFIX = "movie-hindi/cars/";
@@ -14,6 +15,17 @@ const SUFFIX = "movie-hindi/cars/";
 // Hide log section unless we are on the secret /mario path
 if (window.location.pathname !== '/mario') {
     logSection.classList.add('hidden');
+}
+
+// Function to toggle processing indicator
+function setProcessing(isProcessing) {
+    if (isProcessing) {
+        btnStart.classList.add('hidden');
+        processingIndicator.classList.remove('hidden');
+    } else {
+        btnStart.classList.remove('hidden');
+        processingIndicator.classList.add('hidden');
+    }
 }
 
 // Helper for logging
@@ -61,6 +73,7 @@ btnStart.addEventListener('click', () => {
     btnStart.disabled = true;
     btnExecute.classList.add('hidden');
 
+    setProcessing(true);
     socket.emit('start_interactive', { url });
 });
 

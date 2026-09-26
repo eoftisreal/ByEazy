@@ -3,42 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playwright Automation Hub</title>
+    <title>Bypass Anime dekho</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background-color: #f9f9f9; }
-        h1 { text-align: center; color: #333; }
-        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .input-group { margin-bottom: 15px; }
-        input[type="text"] { width: calc(100% - 22px); padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; min-height: 100%; background: #070313; font-family: Arial, sans-serif; color: #333; }
+
+        /* Animated Background CSS */
+        :root { --accent-color: #87ceeb; }
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, #1c052e, #070313); overflow: hidden; z-index: -1; }
+        #moon { position: absolute; top: 5vh; right: 10vw; width: 100px; height: 100px; border-radius: 50%; background: transparent; box-shadow: 0 0 20px 5px rgba(240,240,255,.6), 0 0 50px 20px rgba(240,240,255,.3), inset 0 0 15px rgba(0,0,0,.2); animation: shine 8s ease-in-out infinite; }
+        #stars, #stars2, #stars3 { position: absolute; left: 0; top: 0; width: 1px; height: 1px; background: transparent; animation: animStar linear infinite; }
+        #stars { animation-duration: 50s; box-shadow: 78vw 8vh 0 0 #fff, 89vw 4vh 1px 1px #fff, 96vw 25vh 1px 0 #fff, 24vw 35vh 1px 1px #fff, 62vw 1vh 0 0 #fff, 4vw 97vh 1px 1px #fff, 3vw 12vh 0 1px #fff, 43vw 9vh 1px 1px #fff, 8vw 60vh 0 1px #fff, 64vw 33vh 1px 1px #fff; }
+        #stars2 { animation-duration: 100s; box-shadow: 24vw 85vh 1px 1px #fff, 4vw 46vh 1px 1px #fff, 63vw 3vh 1px 1px #fff, 25vw 2vh 0 1px #fff, 34vw 1vh 0 0 #fff, 54vw 91vh 0 0 #fff, 7vw 80vh 1px 0 #fff, 50vw 81vh 1px 1px #fff, 15vw 68vh 0 1px #fff, 8vw 9vh 0 0 #fff; }
+        #stars3 { animation-duration: 150s; box-shadow: 82vw 82vh 0 1px #fff, 98vw 98vh 1px 1px #fff, 4vw 40vh 0 0 #fff, 33vw 69vh 0 1px #fff, 91vw 12vh 1px 1px #fff, 6vw 7vh 1px 0 #fff, 75vw 3vh 1px 1px #fff, 65vw 50vh 0 1px #fff, 10vw 82vh 1px 0 #fff, 47vw 9vh 0 0 #fff; }
+        #shooting-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-45deg); }
+        #shooting-stars span { position: absolute; background: linear-gradient(-45deg, var(--accent-color), transparent); border-radius: 999px; filter: drop-shadow(0 0 6px var(--accent-color)); animation: shooting-star-animation 5s ease-in-out infinite; }
+        #shooting-stars span:nth-of-type(1) { top: 50%; left: 50%; width: 2px; height: 150px; animation-delay: -2.3s; }
+        #shooting-stars span:nth-of-type(2) { top: 20%; left: 80%; width: 1px; height: 100px; background: linear-gradient(-45deg, #87ceeb, transparent); filter: drop-shadow(0 0 6px #87ceeb); animation-delay: -4.1s; }
+        @keyframes animStar { from { transform: translateY(0); } to { transform: translateY(-2000px); } }
+        @keyframes shine { 50% { transform: scale(1.02); box-shadow: 0 0 30px 10px rgba(240,240,255,.7), 0 0 60px 25px rgba(240,240,255,.4), inset 0 0 15px rgba(0,0,0,.2); } }
+        @keyframes shooting-star-animation { 0% { transform: translateY(-300vh); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(300vh); opacity: 0; } }
+        @keyframes pulse { 0% { opacity: 0.6; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0.6; transform: scale(0.98); } }
+
+        /* UI Overrides for Dark Background */
+        .container { position: relative; z-index: 1; max-width: 800px; margin: 40px auto; padding: 20px; }
+        h1 { text-align: center; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 2.5rem; }
+        h2 { color: #333; }
+        .section { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; backdrop-filter: blur(5px); }
+        .input-group { margin-bottom: 20px; }
+        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; transition: border-color 0.3s; }
+        input[type="text"]:focus { outline: none; border-color: #007bff; box-shadow: 0 0 5px rgba(0,123,255,0.3); }
+
+        button { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: bold; font-size: 16px; transition: all 0.2s; width: 100%; margin-bottom: 10px; }
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-primary { background-color: #007bff; }
-        .btn-success { background-color: #28a745; }
         .btn-warning { background-color: #ffc107; color: black; }
-        .btn-danger { background-color: #dc3545; }
-        .hidden { display: none; }
-        #log-area { background: #333; color: #fff; padding: 15px; border-radius: 8px; height: 150px; overflow-y: auto; font-family: monospace; }
-        .log-msg { margin: 5px 0; }
+
+        .hidden { display: none !important; }
+        #log-area { background: #1a1a2e; color: #0f0; padding: 15px; border-radius: 8px; height: 200px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 14px; border: 1px solid #333; }
+        .log-msg { margin: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 3px; }
         .success { color: #4caf50; }
         .error { color: #f44336; }
+        .info { color: #87ceeb; }
+        .warning { color: #ffeb3b; }
+
+        /* Processing Indicator */
+        #processing-indicator { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px; color: #007bff; font-weight: bold; animation: pulse 1.5s infinite; }
+        .spinner { width: 20px; height: 20px; border: 3px solid rgba(0, 123, 255, 0.3); border-radius: 50%; border-top-color: #007bff; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <h1>Bypass Anime dekho</h1>
-
-    <div class="section" id="interactive-section">
-        <p>Automatically fetches the target shortlink and redirects you.</p>
-        <div class="input-group hidden" id="fallback-input-group">
-            <label for="target-url" style="display:block; margin-bottom:5px; font-size: 14px;">Fallback URL (automatically appends movie-hindi/cars/):</label>
-            <input type="text" id="target-url" placeholder="e.g. https://example.com">
-        </div>
-        <button id="btn-start" class="btn-primary">Start Bypass</button>
-        <button id="btn-execute" class="btn-warning hidden">Redirect Now</button>
+    <div class="bg-animation">
+        <div id="shooting-stars"><span></span><span></span></div>
+        <div id="moon"></div>
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
     </div>
 
-    <div class="section" id="log-section">
-        <h2>Status Logs</h2>
-        <div id="log-area"></div>
+    <div class="container">
+        <h1>Bypass Anime dekho</h1>
+
+        <div class="section" id="interactive-section">
+            <p style="text-align: center; margin-bottom: 25px; font-size: 16px; color: #555;">Automatically fetches the target shortlink and redirects you.</p>
+
+            <div class="input-group hidden" id="fallback-input-group">
+                <label for="target-url" style="display:block; margin-bottom:8px; font-size: 14px; font-weight: bold; color: #d9534f;">⚠ Fallback URL (automatically appends movie-hindi/cars/):</label>
+                <input type="text" id="target-url" placeholder="e.g. https://example.com">
+            </div>
+
+            <button id="btn-start" class="btn-primary">Start Bypass</button>
+            <button id="btn-execute" class="btn-warning hidden">Redirect Now</button>
+
+            <div id="processing-indicator" class="hidden">
+                <div class="spinner"></div>
+                <span>Processing... Please wait</span>
+            </div>
+        </div>
+
+        <div class="section" id="log-section">
+            <h2>System Diagnostics</h2>
+            <div id="log-area"></div>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
