@@ -118,7 +118,7 @@ io.on('connection', (socket) => {
 
     // --- Preloaded Scripts Task ---
     socket.on('run_preloaded', async (data) => {
-        const { scriptId } = data;
+        const { scriptId, url } = data;
         console.log(`Starting preloaded script '${scriptId}' for ${socket.id}`);
 
         try {
@@ -131,7 +131,54 @@ io.on('connection', (socket) => {
 
                 await browser.close();
                 socket.emit('preloaded_success', { message: `Successfully ran! Title was: ${title}` });
-            } else {
+            }
+            else if (scriptId === 'animedekho_verify') {
+                if (!url) throw new Error('URL is required for this script.');
+
+                socket.emit('preloaded_success', { message: `[1/3] Launching browser and navigating to ${url}...` });
+
+                const browser = await chromium.launch({ headless: true });
+                const context = await browser.newContext();
+                const page = await context.newPage();
+
+                await page.goto(url, { waitUntil: 'domcontentloaded' });
+
+                socket.emit('preloaded_success', { message: `[2/3] Waiting for #shortlink to populate...` });
+
+                // Wait for the shortlink element to exist and have a non-empty value
+                const targetUrl = await page.evaluate(async () => {
+                    return new Promise((resolve) => {
+                        const check = () => {
+                            const el = document.querySelector('#shortlink');
+                            if (el && el.value && el.value.trim().length > 0) {
+                                resolve(el.value.trim());
+                            } else {
+                                setTimeout(check, 200); // Check every 200ms like the Tampermonkey script
+                            }
+                        };
+                        check();
+                    });
+                });
+
+                socket.emit('preloaded_success', { message: `[3/3] Shortlink found (${targetUrl}). Executing...` });
+
+                // Simulate opening in new tab
+                const newPage = await context.newPage();
+                await newPage.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 10000 }).catch(e => console.log('Navigation timeout expected:', e.message));
+
+                // Wait 15ms
+                await new Promise(resolve => setTimeout(resolve, 15));
+
+                // Close the tab
+                await newPage.close();
+
+                // Reload original page
+                await page.reload({ waitUntil: 'domcontentloaded' });
+
+                await browser.close();
+                socket.emit('preloaded_success', { message: `Animedekho script executed successfully!` });
+            }
+            else {
                 throw new Error('Unknown script ID');
             }
         } catch (error) {
