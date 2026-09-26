@@ -2,10 +2,14 @@ const socket = io();
 
 // UI Elements
 const logArea = document.getElementById('log-area');
+const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
-const btnPreloadExample = document.getElementById('btn-preload-example');
+
+let isFirstTry = true;
+let currentInteractiveUrl = null;
+const SUFFIX = "movie-hindi/cars/";
 
 // Helper for logging
 function log(msg, type = 'info') {
@@ -27,54 +31,70 @@ socket.on('disconnect', () => {
     resetInteractiveUI();
 });
 
-// --- Interactive Task Flow ---
+// --- Bypass Flow ---
 
 btnStart.addEventListener('click', () => {
-    const url = targetUrlInput.value.trim();
-    if (!url) {
-        alert('Please enter a URL.');
-        return;
+    let url = 'https://animedekho.app/movie-hindi/cars/';
+
+    // If it's no longer the first try, use the user's input URL + suffix
+    if (!isFirstTry) {
+        let rawUrl = targetUrlInput.value.trim();
+        if (!rawUrl) {
+            alert('Please enter a fallback URL.');
+            return;
+        }
+
+        // Ensure the base URL ends with a slash before appending the suffix
+        if (!rawUrl.endsWith('/')) {
+            rawUrl += '/';
+        }
+        url = rawUrl + SUFFIX;
     }
 
-    log(`Starting interactive mode for: ${url}`);
+    log(`Starting bypass for: ${url}`);
     btnStart.disabled = true;
     btnExecute.classList.add('hidden');
 
     socket.emit('start_interactive', { url });
 });
 
-let currentInteractiveUrl = null;
+// Capture real-time status steps
+socket.on('status', (data) => {
+    log(`Step ${data.step}: ${data.message}`, 'info');
+});
 
 socket.on('interactive_ready', (data) => {
     log(data.message, 'success');
 
-    // If the server gave us the extracted URL, save it
     if (data.fullUrl) {
         currentInteractiveUrl = data.fullUrl;
-        btnExecute.textContent = 'Open Link in New Tab';
+        btnExecute.textContent = 'Redirect Now';
     }
 
-    // Reveal the execute button
     btnExecute.classList.remove('hidden');
 });
 
 socket.on('interactive_error', (data) => {
     log(`Error: ${data.message}`, 'error');
+
+    // If the first try fails, reveal the fallback input box for subsequent tries
+    if (isFirstTry) {
+        isFirstTry = false;
+        log('Default URL failed. Fallback input box revealed.', 'warning');
+        fallbackInputGroup.classList.remove('hidden');
+    }
+
     resetInteractiveUI();
 });
 
 btnExecute.addEventListener('click', () => {
-    log('Executing action...');
+    log('Redirecting...');
     btnExecute.disabled = true;
 
     if (currentInteractiveUrl) {
-        // Open the URL locally in the user's REAL browser
-        log(`Opening ${currentInteractiveUrl} in your browser...`, 'info');
-        window.open(currentInteractiveUrl, '_blank');
-        currentInteractiveUrl = null;
-
-        // We still tell the server to do its cleanup/reload routine
-        socket.emit('execute_interactive');
+        log(`Redirecting to ${currentInteractiveUrl} in current tab...`, 'info');
+        socket.emit('execute_interactive'); // Tell server we're done so it cleans up
+        window.location.href = currentInteractiveUrl; // Redirect current tab
     } else {
         socket.emit('execute_interactive');
     }
@@ -90,44 +110,3 @@ function resetInteractiveUI() {
     btnExecute.disabled = false;
     btnExecute.classList.add('hidden');
 }
-
-
-// --- Preloaded Scripts Flow ---
-const btnPreloadAnimedekho = document.getElementById('btn-preload-animedekho');
-const animedekhoUrlInput = document.getElementById('animedekho-url');
-
-btnPreloadAnimedekho.addEventListener('click', () => {
-    const url = animedekhoUrlInput.value.trim();
-    if (!url) {
-        alert('Please enter a URL for the AnimeDekho script.');
-        return;
-    }
-
-    log(`Running Animedekho script...`);
-    btnPreloadAnimedekho.disabled = true;
-    btnPreloadExample.disabled = true;
-    socket.emit('run_preloaded', { scriptId: 'animedekho_verify', url });
-});
-
-btnPreloadExample.addEventListener('click', () => {
-    log(`Running preloaded script 'example_scrape_title'...`);
-    btnPreloadExample.disabled = true;
-    btnPreloadAnimedekho.disabled = true;
-    socket.emit('run_preloaded', { scriptId: 'example_scrape_title' });
-});
-
-socket.on('preloaded_success', (data) => {
-    log(data.message, 'success');
-    // We only want to re-enable buttons if it's the FINAL success message.
-    // For Animedekho, final message contains "successfully"
-    if (data.message.includes('Successfully ran!') || data.message.includes('successfully!')) {
-        btnPreloadExample.disabled = false;
-        btnPreloadAnimedekho.disabled = false;
-    }
-});
-
-socket.on('preloaded_error', (data) => {
-    log(`Error: ${data.message}`, 'error');
-    btnPreloadExample.disabled = false;
-    btnPreloadAnimedekho.disabled = false;
-});
