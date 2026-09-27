@@ -115,6 +115,7 @@ socket.on('interactive_error', (data) => {
         isFirstTry = false;
         log('Default URL failed. Fallback input box revealed.', 'warning');
         fallbackInputGroup.classList.remove('hidden');
+        targetUrlInput.focus();
     }
 
     resetInteractiveUI();
