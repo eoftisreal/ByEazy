@@ -8,6 +8,7 @@ const targetUrlInput = document.getElementById('target-url');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
+const errorFeedback = document.getElementById('error-feedback');
 
 let isFirstTry = true;
 const SUFFIX = "movie-hindi/cars/";
@@ -73,6 +74,7 @@ btnStart.addEventListener('click', () => {
     btnStart.disabled = true;
     btnExecute.classList.add('hidden');
 
+    errorFeedback.classList.add('hidden');
     setProcessing(true);
     socket.emit('start_interactive', { url });
 });
@@ -110,6 +112,9 @@ socket.on('interactive_ready', (data) => {
 socket.on('interactive_error', (data) => {
     log(`Error: ${data.message}`, 'error');
 
+    errorFeedback.textContent = `Error: ${data.message}`;
+    errorFeedback.classList.remove('hidden');
+
     // If the first try fails, reveal the fallback input box for subsequent tries
     if (isFirstTry) {
         isFirstTry = false;
@@ -132,6 +137,7 @@ socket.on('interactive_success', (data) => {
 });
 
 function resetInteractiveUI() {
+    setProcessing(false);
     btnStart.disabled = false;
     btnExecute.disabled = false;
     btnExecute.classList.add('hidden');

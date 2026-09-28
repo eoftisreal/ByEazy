@@ -78,7 +78,9 @@
             <button id="btn-start" class="btn-primary">Start Bypass</button>
             <button id="btn-execute" class="btn-warning hidden">Redirect Now</button>
 
-            <div id="processing-indicator" class="hidden">
+            <div id="error-feedback" class="hidden error" aria-live="assertive"></div>
+
+            <div id="processing-indicator" class="hidden" aria-live="polite">
                 <div class="spinner"></div>
                 <span>Processing... Please wait</span>
             </div>
