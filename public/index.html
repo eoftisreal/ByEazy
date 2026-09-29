@@ -75,10 +75,12 @@
                 <input type="text" id="target-url" placeholder="e.g. https://example.com">
             </div>
 
+            <p id="ui-error-message" class="error hidden" aria-live="assertive"></p>
+
             <button id="btn-start" class="btn-primary">Start Bypass</button>
             <button id="btn-execute" class="btn-warning hidden">Redirect Now</button>
 
-            <div id="processing-indicator" class="hidden">
+            <div id="processing-indicator" class="hidden" aria-live="polite">
                 <div class="spinner"></div>
                 <span>Processing... Please wait</span>
             </div>

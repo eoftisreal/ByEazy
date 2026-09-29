@@ -8,6 +8,17 @@ const targetUrlInput = document.getElementById('target-url');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
+const uiErrorMessage = document.getElementById('ui-error-message');
+
+function showErrorMessage(msg) {
+    uiErrorMessage.innerText = msg;
+    uiErrorMessage.classList.remove('hidden');
+}
+
+function hideErrorMessage() {
+    uiErrorMessage.classList.add('hidden');
+    uiErrorMessage.innerText = '';
+}
 
 let isFirstTry = true;
 const SUFFIX = "movie-hindi/cars/";
@@ -53,12 +64,15 @@ socket.on('disconnect', () => {
 
 btnStart.addEventListener('click', () => {
     let url = 'https://animedekho.app/movie-hindi/cars/';
+    hideErrorMessage();
+    targetUrlInput.removeAttribute('aria-invalid');
 
     // If it's no longer the first try, use the user's input URL + suffix
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            showErrorMessage('Please enter a fallback URL.');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
             return;
         }
 
@@ -115,6 +129,9 @@ socket.on('interactive_error', (data) => {
         isFirstTry = false;
         log('Default URL failed. Fallback input box revealed.', 'warning');
         fallbackInputGroup.classList.remove('hidden');
+        showErrorMessage('Default bypass failed. Please provide a fallback URL.');
+    } else {
+        showErrorMessage(data.message || 'Bypass failed. Please try a different URL.');
     }
 
     resetInteractiveUI();
