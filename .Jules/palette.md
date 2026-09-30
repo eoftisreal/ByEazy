@@ -1,0 +1,3 @@
+## 2024-03-24 - Avoid Native Alerts for Form Validation
+**Learning:** Using native `alert()` for form validation blocks the main thread, creates a jarring user experience, and does not establish a persistent, accessible relationship between the error and the input field.
+**Action:** Default to inline, non-blocking error messages positioned close to the relevant input, and use `aria-live="assertive"` for announcements and `aria-invalid="true"` on the input to ensure screen readers provide context.

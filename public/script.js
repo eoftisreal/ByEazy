@@ -5,6 +5,7 @@ const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
 const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
+const urlError = document.getElementById('url-error');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
@@ -51,6 +52,14 @@ socket.on('disconnect', () => {
 
 // --- Bypass Flow ---
 
+targetUrlInput.addEventListener('input', () => {
+    if (targetUrlInput.hasAttribute('aria-invalid')) {
+        urlError.textContent = '';
+        urlError.classList.add('hidden');
+        targetUrlInput.removeAttribute('aria-invalid');
+    }
+});
+
 btnStart.addEventListener('click', () => {
     let url = 'https://animedekho.app/movie-hindi/cars/';
 
@@ -58,9 +67,17 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            urlError.textContent = 'Please enter a fallback URL.';
+            urlError.classList.remove('hidden');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
+            targetUrlInput.focus();
             return;
         }
+
+        // Clear previous error
+        urlError.textContent = '';
+        urlError.classList.add('hidden');
+        targetUrlInput.removeAttribute('aria-invalid');
 
         // Ensure the base URL ends with a slash before appending the suffix
         if (!rawUrl.endsWith('/')) {
