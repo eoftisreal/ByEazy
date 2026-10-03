@@ -1,0 +1,3 @@
+## 2026-10-03 - Inline Validation Replacement
+**Learning:** Replaced native `alert()` for form validation with an accessible inline error message. Native alerts block the UI and offer a poor user experience. Using a dedicated error element paired with `aria-live="assertive"` and `aria-invalid="true"` on the input ensures screen readers announce the error immediately and accurately reflect the invalid state. Additionally, `aria-live="polite"` was added to the loading spinner to announce async processing.
+**Action:** When performing form validations, always avoid `alert()`. Default to inline, non-blocking error messages associated via `aria-describedby` and managed dynamically using `aria-invalid` and `aria-live` attributes for improved accessibility and UX.
