@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessible Form Validation
+**Learning:** Replacing blocking `alert()` dialogues with non-blocking inline error messages paired with `aria-live` and `aria-invalid` significantly improves the experience for all users, particularly those using screen readers, without disrupting the flow of interaction.
+**Action:** Always prefer inline, accessible validation messages over native alerts for form submissions. Ensure focus is correctly managed when validation fails.
