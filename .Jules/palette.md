@@ -1,0 +1,3 @@
+## 2024-05-17 - Replace Native Alerts with Accessible Inline Errors
+**Learning:** Native `alert()` dialogs create poor user experiences and are inaccessible, as they block interactions and screen readers may not read them efficiently in context. An accessible alternative is an inline error element utilizing `aria-live="assertive"`, `aria-describedby`, and `aria-invalid`.
+**Action:** When creating forms, avoid native dialogs for validation errors. Always use semantic inline error elements tied to input fields with ARIA attributes.
