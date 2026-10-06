@@ -1,0 +1,3 @@
+## 2024-10-06 - Replace Blocking Alerts with Inline Validation
+**Learning:** Native `alert()` dialogs block the entire browser thread, interrupt screen readers, and provide poor context for form errors since focus is lost once dismissed. Using `aria-live="assertive"` on a dynamic error message container allows immediate validation feedback while maintaining focus and without blocking user interactions. Additionally, adding `aria-live="polite"` to loading indicators ensures screen reader users are aware of background processes.
+**Action:** Default to inline, non-blocking error messages paired with `aria-live` and `aria-invalid` attributes instead of native dialogs. Attach an `input` event listener to clear these errors instantly when the user corrects their input.
