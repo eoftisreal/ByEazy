@@ -5,6 +5,7 @@ const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
 const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
+const urlError = document.getElementById('url-error');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
@@ -58,9 +59,15 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            urlError.textContent = 'Please enter a fallback URL.';
+            urlError.classList.remove('hidden');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
             return;
         }
+
+        urlError.classList.add('hidden');
+        urlError.textContent = '';
+        targetUrlInput.setAttribute('aria-invalid', 'false');
 
         // Ensure the base URL ends with a slash before appending the suffix
         if (!rawUrl.endsWith('/')) {
