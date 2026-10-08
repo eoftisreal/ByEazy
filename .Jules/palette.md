@@ -1,0 +1,4 @@
+## 2026-10-08 - Replaced native alert dialogs with inline validation
+
+**Learning:** Using native `alert()` for form validation is a jarring experience and blocks screen readers from naturally reading the error context. By moving from a native alert to a non-blocking inline error immediately following the input field, using an `aria-live="assertive"` container and `aria-invalid="true"`, screen readers proactively and smoothly announce the validation issue without stopping user flow. The `aria-describedby` attribute properly links the input to its specific error message, enhancing context.
+**Action:** When working on form inputs or dynamic states, verify that blocking alerts are not used for validation. Always apply inline error messages with `aria-live` and accurately toggle `aria-invalid` state.
