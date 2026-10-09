@@ -51,15 +51,28 @@ socket.on('disconnect', () => {
 
 // --- Bypass Flow ---
 
+targetUrlInput.addEventListener('input', () => {
+    targetUrlInput.removeAttribute('aria-invalid');
+    const urlError = document.getElementById('url-error');
+    if (urlError) {
+        urlError.classList.add('hidden');
+    }
+});
+
 btnStart.addEventListener('click', () => {
     let url = 'https://animedekho.app/movie-hindi/cars/';
 
     // If it's no longer the first try, use the user's input URL + suffix
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
+        const urlError = document.getElementById('url-error');
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
+            urlError.classList.remove('hidden');
             return;
+        } else {
+            targetUrlInput.removeAttribute('aria-invalid');
+            urlError.classList.add('hidden');
         }
 
         // Ensure the base URL ends with a slash before appending the suffix

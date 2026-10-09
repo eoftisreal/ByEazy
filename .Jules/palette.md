@@ -1,0 +1,3 @@
+## 2024-10-09 - Inline Validation for Forms
+**Learning:** Replacing blocking native `alert()` dialogs with inline validation paired with `aria-live` and `aria-invalid` attributes provides a significantly better, more accessible user experience.
+**Action:** Default to inline, non-blocking error messages paired with `aria-live` and `aria-invalid` attributes for form validation or errors instead of native `alert()` dialogs.
