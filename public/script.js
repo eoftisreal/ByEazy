@@ -53,12 +53,24 @@ socket.on('disconnect', () => {
 
 btnStart.addEventListener('click', () => {
     let url = 'https://animedekho.app/movie-hindi/cars/';
+    const errorContainer = document.getElementById('url-error');
+
+    // Reset error state
+    if (errorContainer) {
+        errorContainer.classList.add('hidden');
+        errorContainer.innerText = '';
+    }
+    targetUrlInput.removeAttribute('aria-invalid');
 
     // If it's no longer the first try, use the user's input URL + suffix
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            if (errorContainer) {
+                errorContainer.innerText = 'Please enter a fallback URL.';
+                errorContainer.classList.remove('hidden');
+            }
+            targetUrlInput.setAttribute('aria-invalid', 'true');
             return;
         }
 

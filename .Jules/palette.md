@@ -1,0 +1,3 @@
+## 2024-05-24 - Replaced Blocking Native Alerts with Accessible Inline Errors
+**Learning:** Native `alert()` dialogs create poor user experiences and accessibility barriers by completely blocking interaction and failing to provide persistent context.
+**Action:** Replaced `alert()` with an inline error container (`#url-error`) styled using existing `.error` classes and enhanced with `aria-live="assertive"`. Associated the error with the input via `aria-describedby` and used `aria-invalid="true"` to clearly communicate form state to screen readers. This pattern should be standardized for all form validations in the application.
