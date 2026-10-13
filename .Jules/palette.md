@@ -1,0 +1,3 @@
+## 2025-01-20 - [Inline Error Validation and A11y]
+**Learning:** Native `alert()` dialogs block the UI and provide a poor user experience, especially for users utilizing screen readers. Inline error validation combined with setting focus dynamically and using `aria-live` and `aria-invalid` provides an excellent, non-blocking alternative. Setting focus on the problematic element is a strong a11y pattern when an error occurs on submission.
+**Action:** Always favor inline error states tied to elements via `aria-describedby`, utilize `aria-invalid` to signify state, dynamically update `aria-live` regions to announce errors assertively, and move focus to the input with the validation issue. Avoid using `alert()` for general user feedback.
