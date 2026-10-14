@@ -9,7 +9,7 @@ const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
 
-let isFirstTry = true;
+window.isFirstTry = true;
 const SUFFIX = "movie-hindi/cars/";
 
 // Hide log section unless we are on the secret /mario path
@@ -55,10 +55,17 @@ btnStart.addEventListener('click', () => {
     let url = 'https://animedekho.app/movie-hindi/cars/';
 
     // If it's no longer the first try, use the user's input URL + suffix
-    if (!isFirstTry) {
+    if (!window.isFirstTry) {
+        const urlError = document.getElementById('url-error');
+        urlError.classList.add('hidden');
+        urlError.innerText = '';
+        targetUrlInput.removeAttribute('aria-invalid');
+
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            urlError.innerText = 'Please enter a fallback URL.';
+            urlError.classList.remove('hidden');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
             return;
         }
 
@@ -111,8 +118,8 @@ socket.on('interactive_error', (data) => {
     log(`Error: ${data.message}`, 'error');
 
     // If the first try fails, reveal the fallback input box for subsequent tries
-    if (isFirstTry) {
-        isFirstTry = false;
+    if (window.isFirstTry) {
+        window.isFirstTry = false;
         log('Default URL failed. Fallback input box revealed.', 'warning');
         fallbackInputGroup.classList.remove('hidden');
     }

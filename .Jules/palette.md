@@ -1,0 +1,3 @@
+## 2024-10-14 - Replace native alert with inline error
+**Learning:** Native `alert()` dialogs used for form validation are a major accessibility anti-pattern because they block the UI thread, often trap screen reader focus poorly, and don't semantically tie the error to the specific input field that caused it.
+**Action:** Replace `alert()` calls with inline error messages placed near the relevant input field. Ensure the error container uses `aria-live="assertive"` so it's announced immediately, and update the associated input with `aria-invalid="true"` when it's in an error state. Clear both the error message and the `aria-invalid` attribute upon the next submission attempt.
