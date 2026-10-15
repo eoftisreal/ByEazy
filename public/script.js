@@ -5,6 +5,7 @@ const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
 const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
+const fallbackError = document.getElementById('fallback-error');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
@@ -39,6 +40,11 @@ function log(msg, type = 'info') {
     logArea.scrollTop = logArea.scrollHeight;
 }
 
+targetUrlInput.addEventListener('input', () => {
+    fallbackError.classList.add('hidden');
+    targetUrlInput.removeAttribute('aria-invalid');
+});
+
 // Socket Connection
 socket.on('connect', () => {
     log('Connected to server.', 'success');
@@ -58,7 +64,10 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            fallbackError.innerText = 'Please enter a fallback URL.';
+            fallbackError.classList.remove('hidden');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
+            targetUrlInput.focus();
             return;
         }
 

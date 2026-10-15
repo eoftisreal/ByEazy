@@ -1,0 +1,3 @@
+## 2024-03-21 - Replaced native alert with accessible inline error
+**Learning:** Native `alert()` dialogs block the main thread and provide a poor user experience, particularly for form validation errors where users need to fix their input. They also lack proper accessibility context for screen readers.
+**Action:** Replaced the `alert()` call with an inline error message container using `aria-live="assertive"` to announce the error to screen readers. Applied `aria-invalid="true"` to the input element when the error occurs, and added an event listener to clear these states as soon as the user starts typing to correct the error.
