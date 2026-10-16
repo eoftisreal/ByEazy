@@ -5,6 +5,7 @@ const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
 const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
+const fallbackError = document.getElementById('fallback-error');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
@@ -58,7 +59,9 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            fallbackError.textContent = 'Please enter a fallback URL.';
+            fallbackError.classList.remove('hidden');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
             return;
         }
 
@@ -118,6 +121,11 @@ socket.on('interactive_error', (data) => {
     }
 
     resetInteractiveUI();
+});
+
+targetUrlInput.addEventListener('input', () => {
+    fallbackError.classList.add('hidden');
+    targetUrlInput.removeAttribute('aria-invalid');
 });
 
 btnExecute.addEventListener('click', () => {
