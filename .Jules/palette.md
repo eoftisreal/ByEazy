@@ -1,0 +1,3 @@
+## 2023-10-16 - Replaced Native Alerts with Accessible Inline Validation
+**Learning:** Native `alert()` dialogs block user interaction, are often completely inaccessible to screen readers, and disrupt the user's context. By using an inline `.error` div paired with `aria-live="assertive"` and setting `aria-invalid="true"` on the input, we provide immediate, non-blocking feedback that is clearly announced by screen readers without breaking the flow.
+**Action:** Always prefer inline validation errors over native dialogs. Ensure they use `aria-live` for announcements and properly link the error to the input using `aria-describedby` and `aria-invalid`.
