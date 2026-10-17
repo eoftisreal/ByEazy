@@ -5,6 +5,7 @@ const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
 const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
+const fallbackError = document.getElementById('fallback-error');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
@@ -51,6 +52,13 @@ socket.on('disconnect', () => {
 
 // --- Bypass Flow ---
 
+targetUrlInput.addEventListener('input', () => {
+    targetUrlInput.setAttribute('aria-invalid', 'false');
+    targetUrlInput.style.borderColor = '';
+    fallbackError.classList.add('hidden');
+    fallbackError.innerText = '';
+});
+
 btnStart.addEventListener('click', () => {
     let url = 'https://animedekho.app/movie-hindi/cars/';
 
@@ -58,9 +66,18 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
+            targetUrlInput.style.borderColor = '#f44336';
+            fallbackError.innerText = 'Please enter a valid URL before starting.';
+            fallbackError.classList.remove('hidden');
             return;
         }
+
+        // Clear error state if input is valid
+        targetUrlInput.setAttribute('aria-invalid', 'false');
+        targetUrlInput.style.borderColor = '';
+        fallbackError.classList.add('hidden');
+        fallbackError.innerText = '';
 
         // Ensure the base URL ends with a slash before appending the suffix
         if (!rawUrl.endsWith('/')) {
