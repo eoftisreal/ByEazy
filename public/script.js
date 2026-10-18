@@ -5,6 +5,7 @@ const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
 const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
+const formError = document.getElementById('form-error');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
@@ -51,6 +52,12 @@ socket.on('disconnect', () => {
 
 // --- Bypass Flow ---
 
+targetUrlInput.addEventListener('input', () => {
+    formError.classList.add('hidden');
+    formError.textContent = '';
+    targetUrlInput.setAttribute('aria-invalid', 'false');
+});
+
 btnStart.addEventListener('click', () => {
     let url = 'https://animedekho.app/movie-hindi/cars/';
 
@@ -58,7 +65,10 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            formError.textContent = 'Please enter a fallback URL.';
+            formError.classList.remove('hidden');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
+            targetUrlInput.focus();
             return;
         }
 
