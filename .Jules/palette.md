@@ -1,0 +1,3 @@
+## 2023-10-25 - Replace Native Alerts with Inline Validation
+**Learning:** Native `alert()` dialogs create poor user experiences and accessibility barriers by completely blocking interaction and lacking semantic context for screen readers. Using them for simple form validation is a known anti-pattern.
+**Action:** Always replace blocking native alerts with inline error messages using `aria-live="assertive"` for immediate screen reader feedback. Ensure the input element receives `aria-invalid="true"` to semantically indicate the error, and automatically clear these states dynamically as the user types to provide a responsive, friction-free recovery path.
