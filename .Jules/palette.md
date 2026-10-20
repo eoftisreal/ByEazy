@@ -1,0 +1,3 @@
+## 2024-10-19 - Replacing Native Alerts with Inline Validation
+**Learning:** Using native `alert()` for form validation is a poor experience because it is blocking and disruptive. It is significantly better for accessibility and UX to use inline, non-blocking error messages. Adding `aria-live="assertive"` to an error container and `aria-invalid="true"` to the corresponding input allows screen readers to provide immediate, context-aware feedback. Clearing the error state smoothly via an `input` event listener provides continuous confirmation to the user that they are correcting the error.
+**Action:** Always avoid `alert()` dialogs for UI validation. Prefer inline validation with proper ARIA attributes, clearing the validation error natively as the user types.
