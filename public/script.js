@@ -5,9 +5,16 @@ const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
 const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
+const fallbackErrorMsg = document.getElementById('fallback-error-msg');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
+
+// Event listener to clear error state on input
+targetUrlInput.addEventListener('input', () => {
+    fallbackErrorMsg.classList.add('hidden');
+    targetUrlInput.removeAttribute('aria-invalid');
+});
 
 let isFirstTry = true;
 const SUFFIX = "movie-hindi/cars/";
@@ -58,7 +65,9 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            fallbackErrorMsg.classList.remove('hidden');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
+            targetUrlInput.focus();
             return;
         }
 
