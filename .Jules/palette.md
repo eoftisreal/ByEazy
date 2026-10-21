@@ -1,0 +1,3 @@
+## 2026-10-21 - Replace blocking native alerts with inline validation
+**Learning:** Native `alert()` dialogs are inaccessible, block the main thread, and provide poor UX, particularly when combined with screen readers. Providing non-blocking, inline errors linked with `aria-live` regions and `aria-invalid` states is significantly more accessible.
+**Action:** Replace all native `alert()` validation fallbacks with inline error nodes. Dynamically manage the `aria-invalid` state and utilize native DOM events like `input` to clear the error state proactively as the user begins correcting their mistake.
