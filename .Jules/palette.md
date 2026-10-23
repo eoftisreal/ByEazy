@@ -1,0 +1,3 @@
+## 2024-05-18 - Replacing Blocking Native Alerts with Inline Validation
+**Learning:** Native `alert()` dialogs block the UI thread, create poor accessibility experiences (often trapping screen reader focus unpredictably), and force the user out of the context of the form. Relying on them for basic validation like empty fields degrades UX significantly.
+**Action:** Default to inline, non-blocking error messages paired with `aria-live="assertive"`, `aria-describedby`, and `aria-invalid` attributes. Always clear the error state natively as the user types using an `input` event listener, keeping the interaction flow smooth.
