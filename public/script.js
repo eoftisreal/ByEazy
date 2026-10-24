@@ -58,7 +58,12 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            const urlError = document.getElementById('url-error');
+            if (urlError) {
+                urlError.innerText = 'Please enter a fallback URL.';
+                urlError.classList.remove('hidden');
+            }
+            targetUrlInput.setAttribute('aria-invalid', 'true');
             return;
         }
 
@@ -136,3 +141,12 @@ function resetInteractiveUI() {
     btnExecute.disabled = false;
     btnExecute.classList.add('hidden');
 }
+
+// Clear error on input
+targetUrlInput.addEventListener('input', () => {
+    const urlError = document.getElementById('url-error');
+    if (urlError) {
+        urlError.classList.add('hidden');
+    }
+    targetUrlInput.removeAttribute('aria-invalid');
+});
