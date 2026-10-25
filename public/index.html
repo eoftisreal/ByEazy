@@ -73,12 +73,13 @@
             <div class="input-group hidden" id="fallback-input-group">
                 <label for="target-url" style="display:block; margin-bottom:8px; font-size: 14px; font-weight: bold; color: #d9534f;">⚠ Fallback URL (automatically appends movie-hindi/cars/):</label>
                 <input type="text" id="target-url" placeholder="e.g. https://example.com">
+                <div id="url-error" class="error hidden" aria-live="assertive"></div>
             </div>
 
             <button id="btn-start" class="btn-primary">Start Bypass</button>
             <button id="btn-execute" class="btn-warning hidden">Redirect Now</button>
 
-            <div id="processing-indicator" class="hidden">
+            <div id="processing-indicator" class="hidden" aria-live="polite">
                 <div class="spinner"></div>
                 <span>Processing... Please wait</span>
             </div>

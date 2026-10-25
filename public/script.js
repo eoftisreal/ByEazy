@@ -5,8 +5,15 @@ const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
 const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
+const urlError = document.getElementById('url-error');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
+
+// Clear error on input
+targetUrlInput.addEventListener('input', () => {
+    urlError.classList.add('hidden');
+    targetUrlInput.removeAttribute('aria-invalid');
+});
 const processingIndicator = document.getElementById('processing-indicator');
 
 let isFirstTry = true;
@@ -58,7 +65,9 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            urlError.innerText = 'Please enter a fallback URL.';
+            urlError.classList.remove('hidden');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
             return;
         }
 
