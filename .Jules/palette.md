@@ -1,0 +1,3 @@
+## 2025-05-15 - Inline Form Validation
+**Learning:** Native `alert()` dialogs block the UI and create a poor experience, particularly for form validation. They are inaccessible for screen readers. Using inline, non-blocking error messages combined with `aria-live="assertive"` for the error container and `aria-invalid="true"` on the input provides immediate, accessible feedback. Clearing the error dynamically using an `input` event listener prevents users from being stuck in an error state.
+**Action:** Next time forms are built or validated, default to inline text validation with ARIA attributes and avoid using `alert()` entirely.
