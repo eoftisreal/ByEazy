@@ -72,7 +72,8 @@
 
             <div class="input-group hidden" id="fallback-input-group">
                 <label for="target-url" style="display:block; margin-bottom:8px; font-size: 14px; font-weight: bold; color: #d9534f;">⚠ Fallback URL (automatically appends movie-hindi/cars/):</label>
-                <input type="text" id="target-url" placeholder="e.g. https://example.com">
+                <input type="text" id="target-url" placeholder="e.g. https://example.com" aria-invalid="false" aria-describedby="target-url-error">
+                <div id="target-url-error" class="error hidden" aria-live="assertive" style="margin-top: 5px; font-size: 14px;"></div>
             </div>
 
             <button id="btn-start" class="btn-primary">Start Bypass</button>
