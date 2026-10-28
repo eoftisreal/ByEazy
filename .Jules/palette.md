@@ -1,0 +1,3 @@
+## 2023-10-28 - Replace Native Alerts with Inline Errors
+**Learning:** Native `alert()` dialogs create poor user experiences and are inaccessible, as they block execution and screen readers cannot handle them seamlessly. Replacing them with inline errors using `aria-live="assertive"` for announcements and linking the error text to the input using `aria-describedby` provides immediate context. The `aria-invalid="true"` state combined with direct `.focus()` application makes the error actionable.
+**Action:** Always favor inline, non-blocking errors linked via ARIA attributes over native alerts. Tie clearing the error state directly to the `input` event on the affected field so the user gets immediate feedback that their fix worked.
