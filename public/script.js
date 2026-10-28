@@ -5,9 +5,17 @@ const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
 const fallbackInputGroup = document.getElementById('fallback-input-group');
 const targetUrlInput = document.getElementById('target-url');
+const urlError = document.getElementById('url-error');
 const btnStart = document.getElementById('btn-start');
 const btnExecute = document.getElementById('btn-execute');
 const processingIndicator = document.getElementById('processing-indicator');
+
+// Clear error state on input
+targetUrlInput.addEventListener('input', () => {
+    urlError.textContent = '';
+    urlError.classList.add('hidden');
+    targetUrlInput.removeAttribute('aria-invalid');
+});
 
 let isFirstTry = true;
 const SUFFIX = "movie-hindi/cars/";
@@ -58,7 +66,10 @@ btnStart.addEventListener('click', () => {
     if (!isFirstTry) {
         let rawUrl = targetUrlInput.value.trim();
         if (!rawUrl) {
-            alert('Please enter a fallback URL.');
+            urlError.textContent = 'Please enter a fallback URL.';
+            urlError.classList.remove('hidden');
+            targetUrlInput.setAttribute('aria-invalid', 'true');
+            targetUrlInput.focus();
             return;
         }
 
